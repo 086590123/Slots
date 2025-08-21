@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ปั่นสล็อต</title>
+<style> body { font-family: sans-serif; background: #222; color: #fff; text-align: center; padding: 20px; } h1 { color: gold; } .slot-machine { display: flex; justify-content: center; gap: 20px; font-size: 3rem; margin: 40px 0; } .slot { background: #444; border-radius: 10px; padding: 20px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; } button { padding: 10px 20px; font-size: 1.2rem; border: none; border-radius: 5px; background: gold; color: #000; cursor: pointer; } button:hover { background: orange; } .back-btn { position: absolute; left: 20px; top: 20px; background: #555; color: white; padding: 8px 15px; font-size: 1rem; border-radius: 5px; cursor: pointer; border: none; } .back-btn:hover { background: #777; } footer { margin-top: 40px; font-size: 0.9rem; color: #aaa; } 
+</style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="window.location.href='index.html'">⬅ กลับไปหน้าลอตเตอรี่</button>
+
+  <h1>🎰 ปั่นสล็อต 🎰</h1>
+
+  <div class="slot-machine">
+    <div class="slot" id="slot1">🍒</div>
+    <div class="slot" id="slot2">🍋</div>
+    <div class="slot" id="slot3">🍇</div>
+  </div>
+
+  <button onclick="spin()">ปั่น!</button>
+
+  <h2 id="resultText" style="margin-top:20px;"></h2>
+
+  <footer>
+    © 2025 ปั่นสล็อต | สร้างโดย คุณมงคล
+  </footer>
+
+  <script>
+    const symbols = ["🍒", "🍋", "🍇", "🍉", "⭐", "🔔"];
+
+    function spin() {
+      document.getElementById("resultText").textContent = "";
+      let slot1 = document.getElementById("slot1");
+      let slot2 = document.getElementById("slot2");
+      let slot3 = document.getElementById("slot3");
+
+      let timers = [];
+      let results = [];
+
+      function startSpin(slotElement, delay, index) {
+        timers[index] = setInterval(() => {
+          slotElement.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(timers[index]);
+          let finalSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+          slotElement.textContent = finalSymbol;
+          results[index] = finalSymbol;
+
+          if (results.filter(r => r !== undefined).length === 3) {
+            checkResult(results);
+          }
+        }, delay);
+      }
+
+      startSpin(slot1, 2000, 0);
+      startSpin(slot2, 2800, 1);
+      startSpin(slot3, 3600, 2);
+    }
+
+    function checkResult(results) {
+      if (results[0] === results[1] && results[1] === results[2]) {
+        document.getElementById("resultText").textContent = "🎉 แจ็คพอต! ได้สามภาพเหมือนกัน! 🎉";
+      } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
+        document.getElementById("resultText").textContent = "✨ ได้ภาพเหมือนกัน 2 ภาพ!";
+      } else {
+        document.getElementById("resultText").textContent = "😢 ลองใหม่อีกครั้ง!";
+      }
+    }
+  </script>
+
+</body>
+</html>
