@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>QR PromptPay รับเงิน</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg,#e0f2fe,#f0f9ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      width: 340px;
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+    h2 { margin: 0 0 16px 0; font-size: 22px; color: #0f172a; }
+    label { display: block; margin-top: 12px; text-align: left; font-size: 14px; color: #334155; }
+    input { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; }
+    button { margin-top: 20px; width: 100%; padding: 12px; border: none; border-radius: 10px; background: #0284c7; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.25s; }
+    button:hover { background: #0369a1; }
+    #qrcode { margin: 24px auto 0 auto; width: 200px; height: 200px; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>สร้าง QR พร้อมเพย์</h2>
+    <label>เบอร์มือถือ / เลขบัตร ปชช.:</label>
+    <input id="ppId" placeholder="เช่น 0812345678">
+    <label>จำนวนเงิน (บาท):</label>
+    <input id="amount" placeholder="เช่น 100">
+    <button onclick="makeQR()">✨ สร้าง QR</button>
+    <div id="qrcode"></div>
+    <button onclick="window.location.href='topup.html'" style="margin-top:10px;background:#10b981;">ไปหน้าระบบเติมเงิน</button>
+  </div>
+
+<script>
+function crc16CCITT(input) {
+  let crc = 0xFFFF;
+  for (let i=0;i<input.length;i++) {
+    crc ^= input.charCodeAt(i)<<8;
+    for(let j=0;j<8;j++){
+      if(crc & 0x8000) crc = (crc<<1)^0x1021; else crc<<=1;
+      crc&=0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4,"0");
+}
+
+function generatePromptPayPayload(id, amount) {
+  id = id.replace(/[^0-9]/g,"");
+  let idField;
+  if(id.length===10){ if(id.startsWith("0")) id="66"+id.substring(1); idField="01"+String(id.length).padStart(2,"0")+id;}
+  else if(id.length===13){ idField="02"+String(id.length).padStart(2,"0")+id;}
+  else return null;
+  const guid="A000000677010111";
+  const merchantAccInfo="0016"+guid+idField;
+  const merchantAccField="29"+String(merchantAccInfo.length).padStart(2,"0")+merchantAccInfo;
+  let payload="000201010211"+merchantAccField+"5303764"+"5802TH";
+  if(amount && parseFloat(amount)>0){ let amt=parseFloat(amount).toFixed(2); payload+="54"+String(amt.length).padStart(2,"0")+amt; }
+  payload+="6304"+crc16CCITT(payload);
+  return payload;
+}
+
+function makeQR(){
+  let id=document.getElementById("ppId").value.trim();
+  let amt=document.getElementById("amount").value.trim();
+  let payload=generatePromptPayPayload(id,amt);
+  if(!payload){ alert("❌ ใส่เบอร์มือถือ (10 หลัก) หรือ บัตร ปชช. (13 หลัก)"); return; }
+  document.getElementById("qrcode").innerHTML="";
+  new QRCode(document.getElementById("qrcode"), { text: payload, width:200, height:200 });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ระบบเติมเงิน</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg,#e0f2fe,#f0f9ff);
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      width: 340px;
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+    h2 { margin: 0 0 16px 0; font-size: 22px; color: #0f172a; }
+    label { display:block; margin-top:12px; text-align:left; font-size:14px; color:#334155; }
+    input, select { width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid #cbd5e1; font-size:15px; }
+    button { margin-top:20px; width:100%; padding:12px; border:none; border-radius:10px; background:#0284c7; color:#fff; font-size:16px; font-weight:600; cursor:pointer; transition:0.25s; }
+    button:hover { background:#0369a1; }
+    #topupResult { margin-top:12px; color:#059669; font-weight:600; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>ระบบเติมเงิน</h2>
+    <label>จำนวนเงินที่จะเติม (บาท):</label>
+    <input id="topupAmount" placeholder="เช่น 500">
+    <label>ช่องทางชำระเงิน:</label>
+    <select id="topupMethod">
+      <option value="PromptPay">PromptPay</option>
+      <option value="Bank">โอนธนาคาร</option>
+      <option value="CreditCard">บัตรเครดิต</option>
+    </select>
+    <button onclick="processTopup()">💰 เติมเงิน</button>
+    <div id="topupResult"></div>
+    <button onclick="window.location.href='qr.html'" style="margin-top:10px;background:#10b981;">กลับไปหน้า QR</button>
+  </div>
+
+<script>
+function processTopup(){
+  let amount=document.getElementById("topupAmount").value.trim();
+  let method=document.getElementById("topupMethod").value;
+  if(!amount || parseFloat(amount)<=0){ alert("กรุณาใส่จำนวนเงินที่ถูกต้อง"); return; }
+  document.getElementById("topupResult").innerText=`✅ เติมเงิน ${amount} บาท ผ่าน ${method} เรียบร้อยแล้ว!`;
+}
+</script>
+</body>
+</html>
